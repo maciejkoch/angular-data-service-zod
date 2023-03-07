@@ -3,25 +3,26 @@ import { User } from '../users.model';
 import { UsersDto } from './users.dto';
 
 export function fromDTO(dto: UsersDto): User[] {
-  return dto.users.map((user) => ({
-    id: user.id,
-    fullName: `${user.firstName} ${user.lastName}`,
-    age: user.age,
-    gender: user.gender,
-    company: {
-      name: user.company.name,
+  return dto.users.map((user) => {
+    const companyAddress = user.company.address;
+    const userAddress = user.address;
+    const fullName = `${user.firstName} ${user.lastName}`;
+    return {
+      id: user.id,
+      fullName,
+      age: user.age,
+      gender: user.gender,
+      company: {
+        name: user.company.name,
+        address: join(
+          [companyAddress.address, companyAddress.city, companyAddress.state],
+          ', '
+        ),
+      },
       address: join(
-        [
-          user.company.address.address,
-          user.company.address.city,
-          user.company.address.state,
-        ],
+        [userAddress.address, userAddress.city, userAddress.state],
         ', '
       ),
-    },
-    address: join(
-      [user.address.address, user.address.city, user.address.state],
-      ', '
-    ),
-  }));
+    };
+  });
 }
